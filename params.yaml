@@ -1,0 +1,12 @@
+chatbot:
+  log_dir_path: "./logs"
+  chatbot_log_file_path: "chatbot.log"
+
+utils:
+  log_dir_path: "./logs"
+  utils_log_file_path: "utils.log"
+
+main:
+  log_dir_path: "./logs"
+  main_log_file_path: "main.log"
+  chat_logs_file_path: "./data/chat_logs.csv"
