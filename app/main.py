@@ -3,12 +3,17 @@ import logging
 import uvicorn
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
+from dotenv import load_dotenv
 
 from app.config import load_params
 from app.chatbot import generate_response
-from app.utils import log_to_csv, mlflow_init, log_to_mlflow
 
+load_dotenv(override=True)
 
+# Langsmith Tracing
+os.environ['LANGCHAIN_API_KEY'] = os.getenv("LANGCHAIN_API_KEY")
+os.environ['LANGCHAIN_PROJECT'] = os.getenv("LANGCHAIN_PROJECT")
+os.environ['LANGCHAIN_TRACING_V2'] = 'true'
 
 # Configuration & Logging
 
@@ -55,16 +60,6 @@ app = FastAPI(
     version="1.0.0",
 )
 
-# Initialize MLflow
-try:
-    mlflow_client = mlflow_init()
-    logger.info("MLflow client initialized successfully.")
-except Exception as e:
-    logger.error("Failed to initialize MLflow client: %s", e, exc_info=True)
-    mlflow_client = None
-
-
-
 # Request Model
 
 class ChatRequest(BaseModel):
@@ -109,18 +104,7 @@ def chat(request: ChatRequest) -> dict:
         # Generate response using chatbot
         response = generate_response(request.model, request.question)
         logger.debug("Chatbot response generated successfully.")
-
-        # Log chat to CSV
-        log_to_csv(request.question, response, chat_logs_file_path)
-        logger.debug("Chat history saved to CSV at: %s", chat_logs_file_path)
-
-        # Log to MLflow (if initialized)
-        if mlflow_client:
-            log_to_mlflow(mlflow_client, request.model, request.question, response)
-            logger.debug("Chat session logged to MLflow.")
-        else:
-            logger.warning("MLflow client not initialized; skipping MLflow logging.")
-
+    
         return {
             "model": request.model,
             "question": request.question,

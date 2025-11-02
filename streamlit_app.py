@@ -31,16 +31,16 @@ if st.button("Get Response"):
                 response = requests.post(
                     API_URL,
                     json={"question": question, "model": model},
-                    timeout=30
+                    timeout=120
                 )
             
             if response.status_code == 200:
                 data = response.json()
-                st.success("✅ Response generated successfully!")
-                st.markdown(f"### 💬 Model: `{data['model']}`")
+                st.success("Response generated successfully!")
+                st.markdown(f"### Model: `{data['model']}`")
                 st.markdown(f"**Response:** {data['response']}")
             else:
-                st.error(f"❌ Server returned {response.status_code}: {response.text}")
+                st.error(f"Server returned {response.status_code}: {response.text}")
 
         except requests.exceptions.RequestException as e:
-            st.error(f"⚠️ Error connecting to backend: {e}")
+            st.error(f"Error connecting to backend: {e}")

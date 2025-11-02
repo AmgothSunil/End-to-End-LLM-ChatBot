@@ -1,0 +1,5 @@
+outs:
+- md5: fc45a177c5d9f4bbdbe1c6d7cffaa2f8
+  size: 40960
+  hash: md5
+  path: chat_history.db
