@@ -31,7 +31,7 @@ if st.button("Get Response"):
                 response = requests.post(
                     API_URL,
                     json={"question": question, "model": model},
-                    timeout=30
+                    timeout=60
                 )
             
             if response.status_code == 200:
