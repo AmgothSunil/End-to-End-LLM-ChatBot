@@ -3,10 +3,10 @@ import logging
 from dotenv import load_dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
-from langchain_groq import ChatGroq
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config import load_params
-from app.sqlite_db import sqlite_init, save_chat_history, fetch_recent_chats
+from app.aws_rds_db import database_init, save_chat, fetch_recent_chats
 
 params = load_params('params.yaml')
 chatbot_params = params['chatbot']
@@ -40,15 +40,15 @@ if not logger.handlers:
 
 # Load environment variables
 load_dotenv(override=True)
-groq_api_key = os.getenv("GROQ_API_KEY")
+gemini_api_key = os.getenv("GOOGLE_API_KEY")
 
-if not groq_api_key:
-    raise EnvironmentError("GROQ_API_KEY is missing in the .env file")
+if not gemini_api_key:
+    raise EnvironmentError("GOOGLE_API_KEY is missing in the .env file")
 
 # Initialize database
 
-sqlite_init()
-logger.info("SQLite database connection initialized successfully.")
+database_init()
+logger.info("AWS RDS MySQL database connection initialized successfully.")
 
 
 # Prompt setup
@@ -78,14 +78,14 @@ def generate_response(llm: str, question: str) -> str:
         # Fetch latest 5 messages as context
         context = fetch_recent_chats(limit=chat_history_limit)
 
-        llm_model = ChatGroq(model=llm, api_key=groq_api_key)
+        llm_model = ChatGoogleGenerativeAI(model=llm, api_key=gemini_api_key)
         chain = prompt | llm_model | output_parser
 
         logger.debug("Generating LLM response...")
         response = chain.invoke({"input": question, "context": context})
 
         # Save interaction to DB
-        save_chat_history(question, response)
+        save_chat(question, response)
 
         logger.info("Response generated successfully.")
         logger.debug("Chat history saved Succesfully.")

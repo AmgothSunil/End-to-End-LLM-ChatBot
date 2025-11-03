@@ -24,11 +24,9 @@ main_params = params["main"]
 # Paths
 log_dir_path = main_params["log_dir_path"]
 main_log_file_path = main_params["main_log_file_path"]
-chat_logs_file_path = main_params["chat_logs_file_path"]
 
 # Ensure directories exist
 os.makedirs(log_dir_path, exist_ok=True)
-os.makedirs(os.path.dirname(chat_logs_file_path), exist_ok=True)
 
 # Logger setup
 logger = logging.getLogger("Main")
@@ -65,9 +63,7 @@ app = FastAPI(
 class ChatRequest(BaseModel):
     """Schema for incoming chatbot requests."""
     question: str
-    model: str = "llama-3.1-8b-instant"
-
-
+    model: str = "gemini-2.5-flash"
 
 # API Endpoints
 

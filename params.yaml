@@ -6,11 +6,8 @@ chatbot:
 main:
   log_dir_path: "./logs"
   main_log_file_path: "main.log"
-  chat_logs_file_path: "./data/chat_logs.csv"
 
-sqlite_params:
+
+aws_rds_params:
   log_dir_path: "./logs"
-  db_logs_file_path: "sqlite.log"
-  db_path: "./data/chat_history.db"
-  output_limit: 250
-
+  db_logs_file_path: "aws_rds.log"

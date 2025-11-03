@@ -10,13 +10,10 @@ API_URL = os.getenv("API_URL")
 
 # Streamlit app title
 st.set_page_config(page_title="LLM Chatbot", page_icon="🤖", layout="wide")
-st.title("🤖 LLM Chatbot (Groq + FastAPI + MLflow)")
+st.title("🤖 LLM Chatbot (Google LLM + FastAPI)")
 
 # Model selector
-model = st.selectbox(
-    "Select your desired LLM model",
-    ["llama-3.1-8b-instant", "openai/gpt-oss-20b", "qwen/qwen3-32b"],
-)
+model = "gemini-2.5-flash"
 
 # User input
 question = st.text_area("Enter your question", height=100)

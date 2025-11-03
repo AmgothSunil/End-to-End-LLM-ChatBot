@@ -1,4 +1,0 @@
-[core]
-    remote = chathistory
-['remote "chathistory"']
-    url = s3://s3-llm-chatbot-bucket
