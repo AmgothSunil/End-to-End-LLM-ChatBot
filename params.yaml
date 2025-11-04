@@ -7,7 +7,6 @@ main:
   log_dir_path: "./logs"
   main_log_file_path: "main.log"
 
-
-aws_rds_params:
+postgre_params:
   log_dir_path: "./logs"
-  db_logs_file_path: "aws_rds.log"
+  postgre_logs_file_path: "postgre.log"

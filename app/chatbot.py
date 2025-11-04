@@ -6,7 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config import load_params
-from app.aws_rds_db import database_init, save_chat, fetch_recent_chats
+from app.postgre_db import database_init, save_chathistory, fetch_chathistory
 
 params = load_params('params.yaml')
 chatbot_params = params['chatbot']
@@ -48,7 +48,7 @@ if not gemini_api_key:
 # Initialize database
 
 database_init()
-logger.info("AWS RDS MySQL database connection initialized successfully.")
+logger.info("PostgreSQL database connection initialized successfully.")
 
 
 # Prompt setup
@@ -76,7 +76,7 @@ def generate_response(llm: str, question: str) -> str:
         logger.info("Initializing chatbot with model: %s", llm)
 
         # Fetch latest 5 messages as context
-        context = fetch_recent_chats(limit=chat_history_limit)
+        context = fetch_chathistory(limit=chat_history_limit)
 
         llm_model = ChatGoogleGenerativeAI(model=llm, api_key=gemini_api_key)
         chain = prompt | llm_model | output_parser
@@ -85,7 +85,7 @@ def generate_response(llm: str, question: str) -> str:
         response = chain.invoke({"input": question, "context": context})
 
         # Save interaction to DB
-        save_chat(question, response)
+        save_chathistory(question, response)
 
         logger.info("Response generated successfully.")
         logger.debug("Chat history saved Succesfully.")

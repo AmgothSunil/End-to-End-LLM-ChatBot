@@ -13,3 +13,4 @@ awscli
 dvc[s3]
 mysql-connector-python
 PyMySQL
+psycopg2-binary
