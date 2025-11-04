@@ -18,7 +18,7 @@ postgre_log_file_path = postgre_params['postgre_logs_file_path']
 os.makedirs(log_dir_path, exist_ok=True)
 
 # Logger setup
-logger = logging.getLogger("RDS_Storage")
+logger = logging.getLogger("Postgre_Storage")
 logger.setLevel(logging.DEBUG)
 
 console_handler = logging.StreamHandler()
