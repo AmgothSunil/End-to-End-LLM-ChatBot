@@ -1,15 +1,9 @@
 langchain
 langchain-community
-langchain-groq
 langchain-google-genai
 streamlit
 fastapi
 python-dotenv
-mlflow
 pydantic
 uvicorn
-dvc
-awscli
-dvc[s3]
 mysql-connector-python
-PyMySQL
