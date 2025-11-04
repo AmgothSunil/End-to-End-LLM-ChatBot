@@ -6,7 +6,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 from app.config import load_params
-from app.postgre_db import database_init, save_chathistory, fetch_chathistory
+from app.mysql_workbench_db import database_init, save_chathistory, fetch_chathistory
 
 params = load_params('params.yaml')
 chatbot_params = params['chatbot']
