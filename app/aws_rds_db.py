@@ -75,6 +75,7 @@ def database_init():
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS chat_history (
             id INT PRIMARY KEY AUTO_INCREMENT,
+            session_id VARCHAR(255) NOT NULL,
             user_input TEXT NOT NULL,
             chatbot_response TEXT NOT NULL,
             timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -90,7 +91,7 @@ def database_init():
         raise
 
 
-def save_chat(user_input: str, bot_response: str):
+def save_chat(session_id: str, user_input: str, bot_response: str):
     """Save Chat history to the database"""
 
     try:
@@ -99,8 +100,8 @@ def save_chat(user_input: str, bot_response: str):
         conn = create_connection()
         cursor = conn.cursor()
 
-        cursor.execute("INSERT INTO chat_history (user_input, chatbot_response) VALUES (%s, %s)",
-                (user_input, bot_response)
+        cursor.execute("INSERT INTO chat_history (session_id,user_input, chatbot_response) VALUES (%s, %s, %s)",
+                (session_id, user_input, bot_response)
         )
 
         conn.commit()
@@ -114,7 +115,7 @@ def save_chat(user_input: str, bot_response: str):
         raise
 
 
-def fetch_recent_chats(limit: int):
+def fetch_recent_chats(session_id: str, limit: int):
     """Get recent chats for chatbot context for conversation memory"""
 
     try:
@@ -123,7 +124,7 @@ def fetch_recent_chats(limit: int):
         conn = create_connection()
         cursor = conn.cursor()
 
-        cursor.execute("SELECT user_input, chatbot_response FROM chat_history ORDER BY id DESC LIMIT %s", (limit,))
+        cursor.execute("SELECT user_input, chatbot_response FROM chat_history WHERE session_id = %s ORDER BY id DESC LIMIT %s", (session_id, limit))
         rows = cursor.fetchall()
         cursor.close()
         conn.close()

@@ -65,7 +65,7 @@ output_parser = StrOutputParser()
 
 # Main chatbot function
 
-def generate_response(llm: str, question: str) -> str:
+def generate_response(llm: str, question: str, session_id: str) -> str:
     """
     Generate a response to a user question using the specified language model.
     """
@@ -76,7 +76,7 @@ def generate_response(llm: str, question: str) -> str:
         logger.info("Initializing chatbot with model: %s", llm)
 
         # Fetch latest 5 messages as context
-        context = fetch_recent_chats(limit=chat_history_limit)
+        context = fetch_recent_chats(session_id=session_id, limit=chat_history_limit)
 
         llm_model = ChatGoogleGenerativeAI(model=llm, api_key=gemini_api_key)
         chain = prompt | llm_model | output_parser
@@ -85,7 +85,7 @@ def generate_response(llm: str, question: str) -> str:
         response = chain.invoke({"input": question, "context": context})
 
         # Save interaction to DB
-        save_chat(question, response)
+        save_chat(session_id=session_id, user_input=question, bot_response=response)
 
         logger.info("Response generated successfully.")
         logger.debug("Chat history saved Succesfully.")

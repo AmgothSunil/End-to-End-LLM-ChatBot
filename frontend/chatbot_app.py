@@ -1,43 +1,72 @@
 import os
+import uuid
 import requests
 import streamlit as st
 from dotenv import load_dotenv
 
+# Load environment variables
 load_dotenv(override=True)
 
-# FastAPI backend URL 
+# Backend FastAPI URL (set this in your .env )
 API_URL = os.getenv("API_URL")
 
-# Streamlit app title
+# Streamlit Page Setup
 st.set_page_config(page_title="LLM Chatbot", page_icon="🤖", layout="wide")
 st.title("🤖 LLM Chatbot (Google LLM + FastAPI)")
 
-# Model selector
+# Generate or reuse a session ID
+if "session_id" not in st.session_state:
+    st.session_state["session_id"] = str(uuid.uuid4())
+    st.session_state["history"] = []  # Initializing chat history
+    st.info("New chat session started!")
+
+session_id = st.session_state["session_id"]
 model = "gemini-2.5-flash"
 
-# User input
-question = st.text_area("Enter your question", height=100)
+# Display the session ID (optional)
+with st.expander("Session Details"):
+    st.code(session_id, language="text")
 
-# Button
+# Chat UI
+user_input = st.text_area("Enter your question", height=100)
+
+# When user clicks the button
 if st.button("Get Response"):
-    if not question.strip():
+    if not user_input.strip():
         st.warning("Please enter a valid question.")
     else:
         try:
             with st.spinner("Generating response..."):
-                response = requests.post(
-                    API_URL,
-                    json={"question": question, "model": model},
-                    timeout=120
-                )
-            
-            if response.status_code == 200: 
+                payload = {
+                    "question": user_input,
+                    "model": model,
+                    "session_id": session_id,
+                }
+                response = requests.post(API_URL, json=payload, timeout=60)
+
+            if response.status_code == 200:
                 data = response.json()
-                st.success("Response generated successfully!")
-                st.markdown(f"### Model: `{data['model']}`")
-                st.markdown(f"**Response:** {data['response']}")
+                bot_reply = data.get("response", "No response received.")
+                st.session_state["history"].append(("user", user_input))
+                st.session_state["history"].append(("bot", bot_reply))
             else:
                 st.error(f"Server returned {response.status_code}: {response.text}")
 
         except requests.exceptions.RequestException as e:
             st.error(f"Error connecting to backend: {e}")
+
+# Display chat history
+if st.session_state["history"]:
+    st.divider()
+    st.subheader("Chat History")
+
+    for role, message in st.session_state["history"]:
+        if role == "user":
+            st.chat_message("user").write(message)
+        else:
+            st.chat_message("assistant").write(message)
+
+# Button to reset the chat
+if st.button("Start New Chat"):
+    st.session_state.clear()
+    st.rerun()

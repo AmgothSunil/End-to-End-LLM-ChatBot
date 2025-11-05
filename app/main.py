@@ -64,6 +64,7 @@ class ChatRequest(BaseModel):
     """Schema for incoming chatbot requests."""
     question: str
     model: str = "gemini-2.5-flash"
+    session_id: str
 
 # API Endpoints
 
@@ -98,11 +99,12 @@ def chat(request: ChatRequest) -> dict:
         logger.info("Received chat request for model: %s", request.model)
 
         # Generate response using chatbot
-        response = generate_response(request.model, request.question)
+        response = generate_response(request.model, request.question, request.session_id)
         logger.debug("Chatbot response generated successfully.")
     
         return {
             "model": request.model,
+            "session_id": request.session_id,
             "question": request.question,
             "response": response,
         }
