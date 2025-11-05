@@ -7,3 +7,5 @@ python-dotenv
 pydantic
 uvicorn
 mysql-connector-python
+awscli
+dvc[s3]

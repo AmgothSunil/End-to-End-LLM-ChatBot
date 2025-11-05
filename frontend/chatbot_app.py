@@ -31,7 +31,7 @@ if st.button("Get Response"):
                     timeout=120
                 )
             
-            if response.status_code == 200:
+            if response.status_code == 200: 
                 data = response.json()
                 st.success("Response generated successfully!")
                 st.markdown(f"### Model: `{data['model']}`")

@@ -5,6 +5,8 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "awscli>=1.42.61",
+    "dvc[s3]>=3.63.0",
     "fastapi>=0.120.4",
     "langchain>=1.0.3",
     "langchain-community>=0.4.1",
