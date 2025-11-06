@@ -22,7 +22,6 @@
           { "name": "DB_NAME", "valueFrom": "/chatbot/DB_NAME" },
           { "name": "DB_PORT", "valueFrom": "/chatbot/DB_PORT" },
           { "name": "DB_PASSWORD", "valueFrom": "/chatbot/DB_PASSWORD" },
-          { "name": "API_URL", "valueFrom": "/chatbot/API_URL" },
           { "name": "GOOGLE_API_KEY", "valueFrom": "/chatbot/GOOGLE_API_KEY" },
           { "name": "LANGCHAIN_API_KEY", "valueFrom": "/chatbot/LANGCHAIN_API_KEY" },
           { "name": "LANGCHAIN_PROJECT", "valueFrom": "/chatbot/LANGCHAIN_PROJECT" }
