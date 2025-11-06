@@ -73,7 +73,7 @@ def generate_response(llm: str, question: str, session_id: str) -> str:
         if not question or not question.strip():
             raise ValueError("Question cannot be empty.")
 
-        logger.info("Initializing chatbot with model: %s", llm)
+        logger.info("Generating response for session: %s with model: %s", session_id, llm)
 
         # Fetch latest 5 messages as context
         context = fetch_recent_chats(session_id=session_id, limit=chat_history_limit)
