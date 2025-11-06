@@ -47,6 +47,9 @@ if st.button("Get Response"):
             if response.status_code == 200:
                 data = response.json()
                 bot_reply = data.get("response", "No response received.")
+                st.divider()
+                st.subheader("Response")
+                st.write(bot_reply)
                 st.session_state["history"].append(("user", user_input))
                 st.session_state["history"].append(("bot", bot_reply))
             else:
