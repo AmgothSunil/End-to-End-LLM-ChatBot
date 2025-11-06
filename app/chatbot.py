@@ -39,7 +39,7 @@ if not logger.handlers:
     logger.addHandler(file_handler)
 
 # Load environment variables
-load_dotenv(override=True)
+load_dotenv()
 gemini_api_key = os.getenv("GOOGLE_API_KEY")
 
 if not gemini_api_key:

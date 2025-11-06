@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 from app.config import load_params
 from app.chatbot import generate_response
 
-load_dotenv(override=True)
+load_dotenv()
 
 # Langsmith Tracing
 os.environ['LANGCHAIN_API_KEY'] = os.getenv("LANGCHAIN_API_KEY")

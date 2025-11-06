@@ -5,7 +5,7 @@ import streamlit as st
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(override=True)
+load_dotenv()
 
 # Backend FastAPI URL (set this in your .env )
 API_URL = os.getenv("API_URL")

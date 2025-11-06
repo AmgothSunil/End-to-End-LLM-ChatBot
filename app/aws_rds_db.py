@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 
 from app.config import load_params
 
-load_dotenv(override=True)
+load_dotenv()
 
 params = load_params("params.yaml")
 
