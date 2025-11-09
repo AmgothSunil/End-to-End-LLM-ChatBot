@@ -1,0 +1,12 @@
+aws_rds_params:
+  db_logs_file_path: "aws_rds.log"
+
+mangodb_params:
+  db_logs_file_path: "mangodb.log"
+
+chatbot:
+  chatbot_log_file_path: "chatbot.log"
+  chat_history_limit: 5
+
+fastapi:
+  fastapi_log_file_path: "fastapi.log"

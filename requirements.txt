@@ -8,4 +8,4 @@ pydantic
 uvicorn
 mysql-connector-python
 awscli
-dvc[s3]
+motor

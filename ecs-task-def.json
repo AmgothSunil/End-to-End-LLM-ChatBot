@@ -6,27 +6,59 @@
   "memory": "512",
   "taskRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
   "executionRoleArn": "arn:aws:iam::768361274236:role/ecsTaskExecutionRole",
+
   "containerDefinitions": [
     {
       "name": "fastapi",
       "image": "768361274236.dkr.ecr.ap-south-1.amazonaws.com/fastapi-chatbot:latest",
       "essential": true,
+
       "portMappings": [
         {
           "containerPort": 8000,
           "protocol": "tcp"
         }
       ],
+
       "secrets": [
-        { "name": "DB_HOST", "valueFrom": "/chatbot/DB_HOST" },
-        { "name": "DB_USER", "valueFrom": "/chatbot/DB_USER" },
-        { "name": "DB_PASSWORD", "valueFrom": "/chatbot/DB_PASSWORD" },
-        { "name": "DB_NAME", "valueFrom": "/chatbot/DB_NAME" },
-        { "name": "DB_PORT", "valueFrom": "/chatbot/DB_PORT" },
+        { "name": "MONGO_URI", "valueFrom":"/chatbot/MONGO_URI"},
+        { "name": "MONGO_DB_NAME", "valueFrom":"/chatbot/MONGO_DB_NAME"},
+        { "name": "MONGO_COLLECTION", "valueFrom":"/chatbot/MONGO_COLLECTION"},
         { "name": "GOOGLE_API_KEY", "valueFrom": "/chatbot/GOOGLE_API_KEY" },
         { "name": "LANGCHAIN_API_KEY", "valueFrom": "/chatbot/LANGCHAIN_API_KEY" },
         { "name": "LANGCHAIN_PROJECT", "valueFrom": "/chatbot/LANGCHAIN_PROJECT" }
-      ]
+      ],
+
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/fastapi-chatbot",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+
+      "environment": [
+        {
+          "name": "UVICORN_LOG_LEVEL",
+          "value": "info"
+        },
+        {
+          "name": "PYTHONUNBUFFERED",
+          "value": "1"
+        }
+      ],
+
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "curl -f http://localhost:8000/ || exit 1"
+        ],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3,
+        "startPeriod": 15
+      }
     }
   ]
 }

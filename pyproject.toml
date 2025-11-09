@@ -1,19 +1,28 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "llm-chatbot"
 version = "0.1.0"
-description = "Add your description here"
+description = "End-to-End LLM Chatbot with AWS RDS, FastAPI, and Streamlit frontend"
+authors = [{name = "Amgoth Sunil", email = "amgothsunil422@gmail.com" }]
 readme = "README.md"
-requires-python = ">=3.13"
+license = {text = "MIT" }
+requires-python = ">=3.10"
 dependencies = [
     "awscli>=1.42.61",
-    "dvc[s3]>=3.63.0",
     "fastapi>=0.120.4",
     "langchain>=1.0.3",
     "langchain-community>=0.4.1",
     "langchain-google-genai>=3.0.0",
+    "motor>=3.7.1",
     "mysql-connector-python>=9.5.0",
     "pydantic>=2.12.3",
     "python-dotenv>=1.2.1",
     "streamlit>=1.51.0",
     "uvicorn>=0.38.0",
 ]
+
+[tool.setuptools.packages.find]
+where = ["app", "frontend"]
