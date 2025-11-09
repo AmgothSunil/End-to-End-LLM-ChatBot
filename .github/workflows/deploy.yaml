@@ -3,38 +3,28 @@ name: CI/CD to AWS ECS
 on:
   push:
     branches:
-      - main  # Deploy only when main is updated
-  workflow_dispatch:  # Also allow manual trigger from GitHub Actions
+      - main
 
 jobs:
   deploy:
-    name: Deploy FastAPI Chatbot to AWS ECS
     runs-on: ubuntu-latest
 
-    permissions:
-      contents: read
-      id-token: write  # for OpenID Connect authentication (more secure than access keys)
-
     steps:
-      # Step 1: Checkout source code
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v4
 
-      # Step 2: Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.AWS_ACCOUNT_ID }}:role/ecsTaskExecutionRole
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
 
-      # Step 3: Login to Amazon ECR
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Step 4: Build, tag, and push Docker image to ECR
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      - name: Build, tag, and push image to ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
@@ -42,22 +32,17 @@ jobs:
         run: |
           echo "Building Docker image..."
           docker build -t $ECR_REPOSITORY .
-          echo "Tagging image..."
           docker tag $ECR_REPOSITORY:latest $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "Image successfully pushed: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # Step 5: Render ECS task definition dynamically with the new image
       - name: Render Amazon ECS task definition
         id: render-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ecs-task-def.json
           container-name: ${{ secrets.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          image: ${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}:${{ github.sha }}
 
-      # Step 6: Deploy ECS task definition to service
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v2
         with:
@@ -65,9 +50,3 @@ jobs:
           service: ${{ secrets.ECS_SERVICE }}
           cluster: ${{ secrets.ECS_CLUSTER }}
           wait-for-service-stability: true
-
-      # Step 7: Confirm deployment success
-      - name: Verify ECS deployment
-        run: |
-          echo "Deployment complete! ECS Service updated successfully."
-          echo "Deployed image: ${{ steps.build-image.outputs.image }}"
