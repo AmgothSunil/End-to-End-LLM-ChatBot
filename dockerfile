@@ -33,7 +33,5 @@
     USER appuser
     EXPOSE 8000
     
-    HEALTHCHECK CMD ["curl", "-f", "http://localhost:8000/"] || exit 1
-    
     CMD ["uvicorn", "app.api.fastapi_app:app", "--host", "0.0.0.0", "--port", "8000"]
     
