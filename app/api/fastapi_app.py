@@ -67,6 +67,11 @@ async def home() -> dict:
     logger.info("Root endpoint accessed.")
     return {"message": "Async LLM Chatbot API running successfully "}
 
+@app.get("/health")
+async def health_check():
+    return {"status": "ok"}
+
+
 
 @app.post("/chat")
 async def chat(request: ChatRequest) -> dict:
