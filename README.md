@@ -1,60 +1,61 @@
-# 🤖 End-to-End LLM Chatbot
+# 🤖 End-to-End LLM Chatbot (MongoDB + FastAPI + Streamlit)
 
-A production-ready conversational AI chatbot built with **FastAPI**, **Streamlit**, and deployed on **AWS ECS (Fargate)**. Features persistent chat history with **AWS RDS MySQL**, **Google Gemini LLM** integration via **LangChain**, and automated CI/CD pipeline using **GitHub Actions**.
+A full-stack, production-ready conversational AI chatbot powered by Google Gemini LLM. Built with FastAPI, LangChain, and Streamlit, this project features a MongoDB backend for persistent chat history, automated CI/CD with GitHub Actions, and cloud deployment (AWS ECS for backend, Render for frontend).
+
+<div align="center">
+
+⭐ **Star this repo if it helped you build your own LLM chatbot!** ⭐
+
+</div>
 
 ---
 
 ## 📋 Table of Contents
 
-- [Features](#-features)
-- [Architecture](#-architecture)
-- [Tech Stack](#-tech-stack)
-- [Project Structure](#-project-structure)
-- [Getting Started](#-getting-started)
-  - [Prerequisites](#prerequisites)
-  - [Local Setup](#local-setup)
-- [Deployment](#-deployment)
-  - [Docker](#docker)
-  - [AWS ECS](#aws-ecs)
-- [CI/CD Pipeline](#-cicd-pipeline)
-- [API Documentation](#-api-documentation)
-- [Configuration](#-configuration)
-- [Contributing](#-contributing)
-- [License](#-license)
+- [✨ Features](#-features)
+- [🏗️ Architecture](#-architecture)
+- [🛠️ Tech Stack](#-tech-stack)
+- [📁 Project Structure](#-project-structure)
+- [🚀 Getting Started (Local)](#-getting-started-local)
+- [🐳 Backend Deployment (AWS ECS)](#-backend-deployment-aws-ecs)
+- [🌐 Frontend Deployment (Render)](#-frontend-deployment-render)
+- [🔄 CI/CD (GitHub Actions)](#-cicd-github-actions)
+- [📚 API Documentation](#-api-documentation)
+- [⚙️ Configuration Reference](#-configuration-reference)
+- [🧠 Example Prompt Flow](#-example-prompt-flow)
+- [👨‍💻 Author](#-author)
+- [📊 Project Status](#-project-status)
+- [📜 License](#-license)
 
 ---
 
 ## ✨ Features
 
-- **FastAPI Backend**: High-performance async API with automatic OpenAPI documentation
-- **Streamlit Frontend**: Interactive chat interface for seamless user experience
-- **LLM Integration**: Google Gemini powered conversational AI via LangChain
-- **Persistent Storage**: Session-based chat history stored in AWS RDS MySQL
-- **Containerized**: Docker support for consistent deployments
-- **Cloud-Native**: Deployed on AWS ECS Fargate with auto-scaling capabilities
-- **Secrets Management**: Secure configuration via AWS Systems Manager Parameter Store
-- **CI/CD**: Automated deployments through GitHub Actions
-- **Production-Ready**: Comprehensive logging, error handling, and monitoring
+- ✅ **FastAPI Backend (Async)** – High-performance, production-grade REST API
+- 💬 **Streamlit Frontend (Render)** – Clean, interactive chat interface
+- 🧠 **Google Gemini Integration** – LLM-powered intelligent responses via LangChain
+- 🗄️ **MongoDB Storage** – Session-based chat memory persistence
+- 🐳 **Dockerized Architecture** – Fully containerized for portability
+- ☁️ **AWS ECS (Fargate)** – Scalable, serverless backend hosting
+- 🔐 **Secure Config via SSM** – AWS Parameter Store for environment secrets
+- 🔁 **GitHub Actions CI/CD** – Automated deployment pipeline
+- 📜 **Structured Logging** – AWS CloudWatch + Rotating file logs
 
 ---
 
 ## 🏗️ Architecture
 
 ```
-┌─────────────┐         ┌──────────────────┐         ┌─────────────┐
-│             │         │                  │         │             │
-│  Streamlit  │────────▶│  FastAPI Backend │────────▶│  AWS RDS    │
-│  Frontend   │         │   (ECS Fargate)  │         │   (MySQL)   │
-│             │         │                  │         │             │
-└─────────────┘         └──────────────────┘         └─────────────┘
-                                │
-                                │
-                                ▼
-                        ┌──────────────┐
-                        │    Google    │
-                        │    Gemini    │
-                        │     LLM      │
-                        └──────────────┘
+┌────────────────┐       ┌──────────────────┐       ┌───────────────┐
+│ Streamlit UI   │──────▶│  FastAPI Backend │──────▶│   MongoDB     │
+│ (Render Cloud) │       │   (AWS ECS)      │       │   (Atlas)     │
+└────────────────┘       └──────────────────┘       └───────────────┘
+                               │
+                               ▼
+                         ┌────────────┐
+                         │ Google     │
+                         │ Gemini LLM │
+                         └────────────┘
 ```
 
 ---
@@ -63,15 +64,15 @@ A production-ready conversational AI chatbot built with **FastAPI**, **Streamlit
 
 | Component | Technology |
 |-----------|-----------|
+| **Frontend** | Streamlit (Render Cloud) |
 | **Backend** | FastAPI, Uvicorn |
-| **Frontend** | Streamlit |
-| **LLM** | Google Gemini (via LangChain) |
-| **Database** | AWS RDS MySQL |
+| **Database** | MongoDB Atlas |
+| **LLM** | Google Gemini (LangChain Integration) |
+| **Cloud Backend** | AWS ECS (Fargate) |
 | **Containerization** | Docker |
-| **Cloud Platform** | AWS (ECS, ECR, RDS) |
 | **CI/CD** | GitHub Actions |
-| **Configuration** | AWS Systems Manager |
-| **Logging** | AWS CloudWatch |
+| **Secrets** | AWS Systems Manager (Parameter Store) |
+| **Monitoring** | AWS CloudWatch |
 
 ---
 
@@ -81,232 +82,423 @@ A production-ready conversational AI chatbot built with **FastAPI**, **Streamlit
 END-TO-END-LLM-CHATBOT/
 ├── .github/
 │   └── workflows/
-│       └── deploy.yaml           # CI/CD pipeline configuration
+│       └── deploy.yaml              # CI/CD pipeline
 ├── app/
 │   ├── __init__.py
-│   ├── aws_rds_db.py            # Database connection and operations
-│   ├── chatbot.py               # LLM and LangChain logic
-│   ├── config.py                # Configuration management
-│   └── main.py                  # FastAPI application entry point
+│   ├── api/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   └── fastapi_app.py          # FastAPI entry point
+│   ├── core/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── config.py               # Configuration loader
+│   │   ├── exception.py            # Custom exceptions
+│   │   └── logger.py               # Logging setup
+│   ├── db/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   └── mango_database.py       # MongoDB async integration
+│   ├── services/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── chatbot.py              # Chatbot logic (LangChain + Gemini)
+│   │   ├── smoke_test_chat.py      # Smoke tests
+│   │   └── __init__.py
+│   └── tests/
+│       ├── __pycache__/
+│       ├── __init__.py
+│       └── smoke_test_chat.py      # Test suite
+├── config/
+│   └── params.yaml                 # Application parameters
 ├── frontend/
-│   ├── chatbot_app.py           # Streamlit UI
-│   └── requirements.txt         # Frontend dependencies
-├── .dockerignore
-├── .env.example                 # Environment variables template
-├── .gitignore
-├── dockerfile                   # Container image definition
-├── ecs-task-def.json           # ECS task definition
-├── LICENSE
-├── params.yaml                  # Application parameters
-├── pyproject.toml              # Python project configuration
-├── README.md
-├── requirements.txt            # Backend dependencies
-└── uv.lock
+│   ├── __init__.py
+│   └── chatbot_app.py              # Streamlit frontend
+├── .dockerignore                   # Docker ignore rules
+├── .env                            # Environment variables (local)
+├── .env.example                    # Example environment variables
+├── .gitignore                      # Git ignore rules
+├── .python-version                 # Python version specification
+├── dockerfile                      # Docker image definition
+├── ecs-task-def.json               # ECS Fargate task definition
+├── lim.chatbot.egg-info/           # Package metadata
+├── LICENSE                         # License file
+├── README.md                       # This file
+├── pyproject.toml                  # Project configuration
+├── requirements.txt                # Python dependencies
+└── uv.lock                         # UV package manager lock file
 ```
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Local)
 
 ### Prerequisites
 
-- Python 3.10 or higher
-- Docker (for containerization)
-- AWS Account (for cloud deployment)
-- Google Gemini API Key
-- MySQL Database (local or RDS)
+- **Python 3.10+**
+- **Docker** (for containerization)
+- **MongoDB Atlas** (cloud) or local MongoDB instance
+- **Google Gemini API Key** – Get it from [Google Cloud Console](https://console.cloud.google.com/)
+- **AWS Account** (for deployment)
 
-### Local Setup
+### Setup
 
 1. **Clone the repository**
+   ```bash
+   git clone https://github.com/yourusername/End-to-End-LLM-ChatBot.git
+   cd End-to-End-LLM-ChatBot
+   ```
 
-```bash
-git clone https://github.com/yourusername/End-to-End-LLM-ChatBot.git
-cd End-to-End-LLM-ChatBot
-```
-
-2. **Create virtual environment**
-
-```bash
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-```
+2. **Create a virtual environment**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
 
 3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```bash
-pip install -r requirements.txt
-```
+4. **Setup environment variables**
 
-4. **Configure environment variables**
+   Create a `.env` file (copy from `.env.example`):
+   ```bash
+   cp .env.example .env
+   ```
 
-Create a `.env` file in the root directory:
+   Edit `.env` with your credentials:
+   ```
+   # MongoDB Configuration
+   MONGO_URI=mongodb+srv://<username>:<password>@cluster.mongodb.net/
+   MONGO_DB_NAME=Chatbot_DB
+   MONGO_COLLECTION=Chatbot_History
 
-```env
-# Database Configuration
-DB_HOST=your-database-host
-DB_PORT=3306
-DB_USER=your-username
-DB_PASSWORD=your-password
-DB_NAME=chatbot
+   # Google Gemini Configuration
+   GOOGLE_API_KEY=your-google-gemini-api-key
 
-# API Keys
-GOOGLE_API_KEY=your-google-gemini-api-key
-LANGCHAIN_API_KEY=your-langchain-api-key
-LANGCHAIN_PROJECT=your-project-name
-```
+   # LangChain Configuration
+   LANGCHAIN_API_KEY=your-langchain-api-key
+   LANGCHAIN_PROJECT=chatbot
+   ```
 
-5. **Run the backend**
+5. **Run FastAPI backend locally**
+   ```bash
+   uvicorn app.api.fastapi_app:app --reload --port 8000
+   ```
 
-```bash
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
-```
+   API documentation available at: [http://localhost:8000/docs](http://localhost:8000/docs)
 
-6. **Run the frontend** (in a separate terminal)
+6. **Run Streamlit frontend** (in a new terminal)
+   ```bash
+   cd frontend
+   streamlit run chatbot_app.py
+   ```
 
-```bash
-cd frontend
-streamlit run chatbot_app.py
-```
-
-Access the application:
-- Frontend: `http://localhost:8501`
-- Backend API: `http://localhost:8000`
-- API Docs: `http://localhost:8000/docs`
+   Access UI at: [http://localhost:8501](http://localhost:8501)
 
 ---
 
-## 🐳 Deployment
+## 🐳 Backend Deployment (AWS ECS)
 
-### Docker
-
-Build and run the Docker container:
+### Step 1: Build Docker Image
 
 ```bash
-# Build image
-docker build -t llm-chatbot .
-
-# Run container
-docker run -d -p 8000:8000 --env-file .env llm-chatbot
+docker build -t fastapi_chatbot .
 ```
 
-### AWS ECS
-
-**1. Create ECR Repository**
+### Step 2: Push to Amazon ECR
 
 ```bash
-aws ecr create-repository --repository-name llm-chatbot --region ap-south-1
-```
-
-**2. Build and Push Docker Image**
-
-```bash
-# Authenticate Docker to ECR
+# Get login token
 aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin <account-id>.dkr.ecr.ap-south-1.amazonaws.com
 
-# Tag and push
-docker tag llm-chatbot:latest <account-id>.dkr.ecr.ap-south-1.amazonaws.com/llm-chatbot:latest
-docker push <account-id>.dkr.ecr.ap-south-1.amazonaws.com/llm-chatbot:latest
+# Tag image
+docker tag fastapi_chatbot:latest <account-id>.dkr.ecr.ap-south-1.amazonaws.com/fastapi-chatbot:latest
+
+# Push to ECR
+docker push <account-id>.dkr.ecr.ap-south-1.amazonaws.com/fastapi-chatbot:latest
 ```
 
-**3. Create ECS Cluster**
+### Step 3: Store Environment Variables in AWS Systems Manager Parameter Store
 
 ```bash
-aws ecs create-cluster --cluster-name chatbot-cluster --region ap-south-1
+aws ssm put-parameter \
+  --name "/chatbot/MONGO_URI" \
+  --value "mongodb+srv://..." \
+  --type "SecureString" \
+  --region ap-south-1
+
+aws ssm put-parameter \
+  --name "/chatbot/GOOGLE_API_KEY" \
+  --value "your-api-key" \
+  --type "SecureString" \
+  --region ap-south-1
+
+aws ssm put-parameter \
+  --name "/chatbot/LANGCHAIN_API_KEY" \
+  --value "your-langchain-key" \
+  --type "SecureString" \
+  --region ap-south-1
 ```
 
-**4. Configure AWS Systems Manager Parameter Store**
-
-Store sensitive configuration:
+### Step 4: Register ECS Task Definition
 
 ```bash
-aws ssm put-parameter --name "/chatbot/DB_HOST" --value "your-db-host" --type "String"
-aws ssm put-parameter --name "/chatbot/DB_PASSWORD" --value "your-password" --type "SecureString"
-# Repeat for all environment variables
+aws ecs register-task-definition \
+  --cli-input-json file://ecs-task-def.json \
+  --region ap-south-1
 ```
 
-**5. Deploy ECS Service**
-
-Update `ecs-task-def.json` with your values and deploy:
+### Step 5: Create ECS Service
 
 ```bash
-aws ecs register-task-definition --cli-input-json file://ecs-task-def.json
-aws ecs create-service --cluster chatbot-cluster --service-name chatbot-service --task-definition chatbot-task --desired-count 1 --launch-type FARGATE
+aws ecs create-service \
+  --cluster chatbot-cluster \
+  --service-name chatbot-service \
+  --task-definition fastapi-task:1 \
+  --desired-count 1 \
+  --launch-type FARGATE \
+  --network-configuration "awsvpcConfiguration={subnets=[subnet-xxx],securityGroups=[sg-xxx],assignPublicIp=ENABLED}" \
+  --region ap-south-1
 ```
 
 ---
 
-## 🔄 CI/CD Pipeline
+## 🌐 Frontend Deployment (Render)
 
-The project uses **GitHub Actions** for automated deployments. On every push to the `main` branch:
+### Step 1: Connect Repository to Render
 
-1. ✅ Builds Docker image
-2. ✅ Pushes to Amazon ECR
-3. ✅ Updates ECS task definition
-4. ✅ Deploys new version to ECS service
+- Go to [https://render.com](https://render.com) → **Create New** → **Web Service**
+- Connect your GitHub repository
 
-**Required GitHub Secrets:**
+### Step 2: Configure Build & Start Commands
 
-- `AWS_ACCESS_KEY_ID`
-- `AWS_SECRET_ACCESS_KEY`
-- `AWS_REGION`
-- `ECR_REPOSITORY`
-- `ECS_CLUSTER`
-- `ECS_SERVICE`
-- `CONTAINER_NAME`
+**Build Command:**
+```bash
+pip install -r frontend/requirements.txt
+```
 
-Configure these in: `Repository Settings → Secrets and variables → Actions`
+**Start Command:**
+```bash
+streamlit run frontend/chatbot_app.py --server.port 10000 --server.address 0.0.0.0
+```
+
+### Step 3: Add Environment Variables
+
+In Render dashboard, add:
+
+| Variable | Value |
+|----------|-------|
+| `API_URL` | `https://your-ecs-endpoint/chat` |
+
+### Step 4: Deploy
+
+Click **Deploy** and wait for the service to go live! 🚀
+
+Your frontend is now live on Render, communicating with your AWS ECS backend.
+
+---
+
+## 🔄 CI/CD (GitHub Actions)
+
+The workflow in `.github/workflows/deploy.yaml` automatically:
+
+1. Builds the Docker image
+2. Pushes to Amazon ECR
+3. Updates the ECS task definition
+4. Deploys the latest version to ECS
+
+### Required GitHub Secrets
+
+Add these secrets to your GitHub repository (Settings → Secrets → Actions):
+
+| Secret | Description | Example |
+|--------|-------------|---------|
+| `AWS_ACCESS_KEY_ID` | AWS IAM access key | `AKIAIOSFODNN7EXAMPLE` |
+| `AWS_SECRET_ACCESS_KEY` | AWS IAM secret key | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
+| `AWS_REGION` | AWS deployment region | `ap-south-1` |
+| `ECR_REPOSITORY` | ECR repository name | `fastapi-chatbot` |
+| `ECS_CLUSTER` | ECS cluster name | `chatbot-cluster` |
+| `ECS_SERVICE` | ECS service name | `chatbot-service` |
+| `CONTAINER_NAME` | ECS container name | `fastapi-container` |
 
 ---
 
 ## 📚 API Documentation
 
-Once the backend is running, access interactive API documentation:
+### Base URL
+```
+http://localhost:8000  (local)
+https://your-ecs-endpoint  (production)
+```
 
-- **Swagger UI**: `http://localhost:8000/docs`
-- **ReDoc**: `http://localhost:8000/redoc`
+### Endpoints
 
-### Key Endpoints
+#### 1. Health Check
+```http
+GET /
+```
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Health check |
-| POST | `/chat` | Send message and get LLM response |
-| GET | `/history/{session_id}` | Retrieve chat history |
+**Response:**
+```json
+{
+  "status": "healthy",
+  "message": "FastAPI Chatbot Backend is running"
+}
+```
+
+#### 2. Chat Endpoint
+```http
+POST /chat
+```
+
+**Request Body:**
+```json
+{
+  "user_id": "user_123",
+  "message": "What is LangChain?",
+  "session_id": "session_456"
+}
+```
+
+**Response:**
+```json
+{
+  "user_id": "user_123",
+  "session_id": "session_456",
+  "user_message": "What is LangChain?",
+  "assistant_response": "LangChain is a framework for building applications powered by large language models.",
+  "timestamp": "2025-11-09T14:30:00Z"
+}
+```
 
 ---
 
-## ⚙️ Configuration
+## ⚙️ Configuration Reference
 
 ### Environment Variables
 
-All sensitive configuration is managed via environment variables or AWS Parameter Store:
+| Variable | Description | Required | Example |
+|----------|-------------|----------|---------|
+| `MONGO_URI` | MongoDB connection string | ✅ | `mongodb+srv://user:pass@cluster.mongodb.net/` |
+| `MONGO_DB_NAME` | MongoDB database name | ✅ | `Chatbot_DB` |
+| `MONGO_COLLECTION` | MongoDB collection name | ✅ | `Chatbot_History` |
+| `GOOGLE_API_KEY` | Google Gemini API key | ✅ | `AIzaSy...` |
+| `LANGCHAIN_API_KEY` | LangChain API key | ❌ | `ls__...` |
+| `LANGCHAIN_PROJECT` | LangChain project name | ❌ | `chatbot` |
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `DB_HOST` | Database host endpoint | Yes |
-| `DB_PORT` | Database port (default: 3306) | Yes |
-| `DB_USER` | Database username | Yes |
-| `DB_PASSWORD` | Database password | Yes |
-| `DB_NAME` | Database name | Yes |
-| `GOOGLE_API_KEY` | Google Gemini API key | Yes |
-| `LANGCHAIN_API_KEY` | LangChain API key | No |
-| `LANGCHAIN_PROJECT` | LangChain project name | No |
-
-### Application Parameters
-
-Customize application behavior in `params.yaml`:
+### Configuration File (`config/params.yaml`)
 
 ```yaml
-model:
-  name: "gemini-pro"
+chatbot:
+  model: "gemini-pro"
   temperature: 0.7
-  max_tokens: 1024
-
-database:
-  pool_size: 5
-  pool_recycle: 3600
+  max_tokens: 512
+  
+mongo:
+  timeout: 30
+  retry_attempts: 3
+  
+logging:
+  level: "INFO"
+  format: "structured"
 ```
+
+---
+
+## 🧠 Example Prompt Flow
+
+```
+User: What is LangChain?
+Assistant: LangChain is a framework for building applications powered by 
+large language models. It provides tools and abstractions for working with LLMs.
+
+User: Explain it like I'm 10 years old.
+Assistant: Imagine a super smart robot that can read, understand, and write. 
+LangChain is the toolbox that helps people build that robot!
+
+User: Can you show me an example?
+Assistant: Sure! Here's a simple example using Python:
+```python
+from langchain import OpenAI, PromptTemplate
+
+llm = OpenAI(temperature=0.9)
+prompt = PromptTemplate(input_variables=["topic"], template="Tell me about {topic}")
+result = llm(prompt.format(topic="Python"))
+print(result)
+```
+
+---
+
+## 🛠️ Development & Testing
+
+### Run Smoke Tests
+
+```bash
+pytest tests/smoke_test_chat.py -v
+```
+
+### View Logs Locally
+
+```bash
+tail -f logs/app.log
+```
+
+### AWS CloudWatch Logs (Production)
+
+```bash
+aws logs tail /ecs/fastapi-chatbot --follow --region ap-south-1
+```
+
+---
+
+## 📝 Troubleshooting
+
+### Issue: MongoDB Connection Error
+- ✅ Verify `MONGO_URI` format is correct
+- ✅ Check IP whitelist in MongoDB Atlas
+- ✅ Ensure credentials are URL-encoded
+
+### Issue: Gemini API Rate Limit
+- ✅ Add request retry logic
+- ✅ Implement exponential backoff
+- ✅ Monitor API usage in Google Cloud Console
+
+### Issue: ECS Task Failing
+- ✅ Check CloudWatch logs: `aws logs tail /ecs/fastapi-chatbot`
+- ✅ Verify IAM permissions for SSM Parameter Store
+- ✅ Confirm security group rules allow egress
+
+---
+
+## 👨‍💻 Author
+
+**Your Name / GenAI Learner**
+
+- 🚀 **GitHub:** [@yourusername](https://github.com/yourusername)
+- 💼 **LinkedIn:** [Your Profile](https://linkedin.com/in/yourprofile)
+- 🌐 **Portfolio:** [yourwebsite.com](https://yourwebsite.com)
+
+---
+
+## 📊 Project Status
+
+- ✅ FastAPI + Async MongoDB backend
+- ✅ Streamlit frontend
+- ✅ AWS ECS backend deployment
+- ✅ Render frontend deployment
+- ✅ CI/CD GitHub Actions pipeline
+- 🔄 Authentication system (in progress)
+- ⏳ HTTPS + Custom domain
+- ⏳ Load balancing with ALB
+- ⏳ Multi-region deployment
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License** – see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -315,53 +507,17 @@ database:
 Contributions are welcome! Please follow these steps:
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
-
----
-
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-## 👨‍💻 Author
-
-**GenAI Learner**
-
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourprofile)
-
----
-
-## 🙏 Acknowledgments
-
-- [FastAPI](https://fastapi.tiangolo.com/) - Modern web framework
-- [LangChain](https://langchain.com/) - LLM orchestration
-- [Streamlit](https://streamlit.io/) - Interactive UI
-- [Google Gemini](https://ai.google.dev/) - Generative AI model
-
----
-
-## 📊 Project Status
-
-- [x] Core chatbot functionality
-- [x] AWS RDS integration
-- [x] Docker containerization
-- [x] ECS deployment
-- [x] CI/CD pipeline
-- [ ] User authentication
-- [ ] Multi-user support
-- [ ] HTTPS with ALB
-- [ ] Kubernetes migration
 
 ---
 
 <div align="center">
 
-**⭐ Star this repository if you find it helpful!**
+**⭐ If this project helped you, please star it! ⭐**
+
+Made with ❤️ by GenAI Learner
 
 </div>
